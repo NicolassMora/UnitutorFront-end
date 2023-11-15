@@ -1,3 +1,4 @@
+// Crearcuenta.jsx
 import React, { useState } from 'react';
 
 const crearcuentaStyles = {
@@ -83,8 +84,7 @@ const crearcuentaStyles = {
   },
 };
 
-function Crearcuenta() {
-
+const Crearcuenta = () => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [correo, setCorreo] = useState('');
@@ -92,13 +92,40 @@ function Crearcuenta() {
   const [confirmContrasena, setConfirmContrasena] = useState('');
   const [id, setId] = useState('');
 
-  
   const handleInputChange = (e, setter) => {
     setter(e.target.value);
   };
 
   const handleInputFocus = (setter) => {
     setter('');
+  };
+
+  const handleSubmit = async () => {
+    try {
+      console.log('Nombre:', nombre);
+      console.log('Apellido:', apellido);
+      console.log('Correo:', correo);
+      console.log('Contraseña:', contrasena);
+      console.log('Confirmar Contraseña:', confirmContrasena);
+      console.log('ID:', id);
+
+      const response = await fetch('http://localhost:4000/user/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nombre, apellido, correo, contrasena, confirmContrasena, id }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error al crear usuario: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error al crear usuario:', error.message);
+    }
   };
 
   return (
@@ -186,12 +213,13 @@ function Crearcuenta() {
             />
             <span style={crearcuentaStyles.inputSpan}>{id ? '' : 'ID'}</span>
           </label>
+          
+          <button style={crearcuentaStyles.submit} onClick={handleSubmit}>Aceptar</button>
 
-          <button style={crearcuentaStyles.submit}>Aceptar</button>
         </div>
       </form>
     </div>
   );
-}
+};
 
 export default Crearcuenta;
