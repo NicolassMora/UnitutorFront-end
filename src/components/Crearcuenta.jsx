@@ -1,5 +1,5 @@
-// Crearcuenta.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate} from 'react-router-dom';
 
 const crearcuentaStyles = {
   container: {
@@ -13,9 +13,9 @@ const crearcuentaStyles = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px', 
-    maxWidth: '100%', 
-    width: '400px', 
+    gap: '20px',
+    maxWidth: '100%',
+    width: '400px',
     backgroundColor: '#fff',
     padding: '20px',
     borderRadius: '20px',
@@ -37,8 +37,8 @@ const crearcuentaStyles = {
   },
   flex: {
     display: 'flex',
-    flexDirection: 'column', 
-    gap: '16px', 
+    flexDirection: 'column',
+    gap: '16px',
   },
   label: {
     position: 'relative',
@@ -70,18 +70,6 @@ const crearcuentaStyles = {
     transition: '0.3s ease',
     marginTop: '16px',
   },
-  signin: {
-    color: 'rgba(88, 87, 87, 0.822)',
-    fontSize: '14px',
-    textAlign: 'center',
-  },
-  signinLink: {
-    color: 'royalblue',
-    textDecoration: 'none',
-  },
-  signinLinkHover: {
-    textDecoration: 'underline',
-  },
 };
 
 const Crearcuenta = () => {
@@ -91,6 +79,8 @@ const Crearcuenta = () => {
   const [contrasena, setContrasena] = useState('');
   const [confirmContrasena, setConfirmContrasena] = useState('');
   const [id, setId] = useState('');
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e, setter) => {
     setter(e.target.value);
@@ -109,12 +99,21 @@ const Crearcuenta = () => {
       console.log('Confirmar Contraseña:', confirmContrasena);
       console.log('ID:', id);
 
+      // Simulación de llamada a la API para crear un usuario
+      // Reemplaza esto con la lógica real de tu backend
       const response = await fetch('http://localhost:4000/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, apellido, correo, contrasena, confirmContrasena, id }),
+        body: JSON.stringify({
+          nombre,
+          apellido,
+          correo,
+          contrasena,
+          confirmContrasena,
+          id,
+        }),
       });
 
       if (!response.ok) {
@@ -122,11 +121,38 @@ const Crearcuenta = () => {
       }
 
       const data = await response.json();
-      console.log(data);
+      console.log('Usuario creado:', data);
+
+      // Después de crear el usuario, obtener la lista actualizada de usuarios
+      obtenerUsuarios();
+
+      // Redirigir a la página principal
+      navigate.push('/home');
     } catch (error) {
       console.error('Error al crear usuario:', error.message);
     }
   };
+
+  const obtenerUsuarios = async () => {
+    try {
+      // Simulación de llamada a la API para obtener usuarios
+      // Reemplaza esto con la lógica real de tu backend
+      const response = await fetch('http://localhost:4000/user/get-all');
+
+      if (!response.ok) {
+        throw new Error(`Error al obtener usuarios: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Usuarios obtenidos:', data.usuarios);
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    obtenerUsuarios();
+  }, []);
 
   return (
     <div style={crearcuentaStyles.container}>
@@ -213,9 +239,10 @@ const Crearcuenta = () => {
             />
             <span style={crearcuentaStyles.inputSpan}>{id ? '' : 'ID'}</span>
           </label>
-          
-          <button style={crearcuentaStyles.submit} onClick={handleSubmit}>Aceptar</button>
 
+          <button style={crearcuentaStyles.submit} onClick={handleSubmit}>
+            Aceptar
+          </button>
         </div>
       </form>
     </div>

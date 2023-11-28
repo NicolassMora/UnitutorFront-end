@@ -4,14 +4,29 @@ import { useNavigate } from "react-router-dom";
 
 const Alumnos = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (username === "123" && password === "contraseña123") {
-      navigate("/Paginaprincipal");
-    } else {
-      alert("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: userId, contrasena: password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        navigate("/Paginaprincipal");
+      } else {
+        alert("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      alert("Error al iniciar sesión. Por favor, inténtalo de nuevo.");
     }
   };
 
@@ -26,24 +41,26 @@ const Alumnos = () => {
     alignItems: "center",
   };
 
+  const cajaEstilo = {
+    border: "1px solid #e0e0e0",
+    borderRadius: "4px",
+    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
+    padding: "20px",
+    width: "400px",
+    textAlign: "center",
+    backgroundColor: "#ffffff",
+  };
+
   return (
     <Box style={fondoEstilo}>
-      <Box
-        border="1px solid #e0e0e0"
-        borderRadius="4px"
-        boxShadow="0px 0px 10px 0px rgba(0, 0, 0, 0.1)"
-        padding="20px"
-        width="400px"
-        textAlign="center"
-        backgroundColor="#ffffff"
-      >
+      <Box style={cajaEstilo}>
         <TextField
           label="ID"
           variant="outlined"
           fullWidth
           margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
         />
         <TextField
           label="Contraseña"

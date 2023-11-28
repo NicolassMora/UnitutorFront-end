@@ -1,17 +1,44 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Reseñas = () => {
   const [author, setAuthor] = useState("");
   const [rating, setRating] = useState("");
   const [content, setContent] = useState("");
+  const [reseñas, setReseñas] = useState([]);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Autor:", author);
-    console.log("Calificación:", rating);
-    console.log("Contenido:", content);
+    const nuevaReseña = {
+      author: author,
+      rating: rating,
+      content: content,
+    };
+
+    // Mostrar confirmación
+    const confirmacion = window.confirm("¿Estás seguro de enviar esta reseña?");
+
+    if (confirmacion) {
+      // Agregar la nueva reseña al array de reseñas
+      setReseñas((prevReseñas) => [...prevReseñas, nuevaReseña]);
+
+      // Limpiar los campos después de enviar la reseña
+      setAuthor("");
+      setRating("");
+      setContent("");
+
+      // Mostrar en la consola
+      console.log("Reseña enviada:", nuevaReseña);
+
+      // Redirigir a la página principal
+      navigate("/");
+    } else {
+      // Si el usuario elige no enviar, puedes agregar lógica adicional aquí
+      console.log("El usuario eligió no enviar la reseña.");
+    }
   };
 
   const fondoEstilo = {
@@ -86,3 +113,4 @@ const Reseñas = () => {
 };
 
 export default Reseñas;
+
